@@ -36,6 +36,6 @@ func main() {
 	var publicContentRewriteRule = middleware.Rewrite(map[string]string{"/*": "/public/$1"})
 	e.GET("/*", publicStaticContentHandler, publicContentRewriteRule)
 
-	fmt.Println("Starting server on http://localhost:4040")
-	e.Logger.Fatal(e.Start(":4040"))
+	fmt.Println("Starting server on http://localhost:8080")
+	e.Logger.Fatal(e.Start(":8080"))
 }
