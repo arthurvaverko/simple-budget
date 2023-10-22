@@ -2,10 +2,10 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"github.com/arthurvaverko/simple-budget/app"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/labstack/gommon/log"
 	"golang.org/x/time/rate"
 	"net/http"
 )
@@ -13,11 +13,13 @@ import (
 //go:embed public/*
 var publicFs embed.FS
 
+var loggerFormat = "${level} ${time_rfc3339} ${id} ${method} ${uri} ${status} ${error} ${latency_human} \n"
+
 func main() {
 	e := echo.New()
-	e.Logger.SetLevel(log.DEBUG)
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(middleware.Logger())
+	e.Use(middleware.RequestID())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Format: loggerFormat}))
 	e.Use(middleware.Recover())
 	e.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(
 		rate.Limit(20),
@@ -34,6 +36,6 @@ func main() {
 	var publicContentRewriteRule = middleware.Rewrite(map[string]string{"/*": "/public/$1"})
 	e.GET("/*", publicStaticContentHandler, publicContentRewriteRule)
 
-	e.Logger.Info("Starting server on http://localhost:4040")
+	fmt.Println("Starting server on http://localhost:4040")
 	e.Logger.Fatal(e.Start(":4040"))
 }
