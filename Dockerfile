@@ -3,7 +3,6 @@ WORKDIR /src
 COPY . .
 
 # env vars for configuring go build
-ENV GOPRIVATE github.com/venn-city
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
